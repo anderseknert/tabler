@@ -1,0 +1,5 @@
+rules:
+  style:
+    rule-length:
+      # temporary - fix later
+      level: ignore

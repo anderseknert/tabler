@@ -1,14 +1,33 @@
 package tabler
 
-render(rows) := rendered if {
+render(rows, config) := rendered if {
+	default_config := {"style": "light"}
+
+	final := object.union(default_config, config)
+	style := data.tabler.styles[final.style]
+
 	str_rows := _stringify(rows)
 	col_cwid := _column_content_widths(str_rows)
 	col_maxs := [max(widths) | some widths in col_cwid]
 
-	top := concat("", ["┌", concat("┬", [_repeat("─", m) | some m in col_maxs]), "┐\n"])
+	top := concat("", [
+		style.top_left,
+		concat(style.top_middle, [_repeat(style.horizontal, m) | some m in col_maxs]),
+		style.top_right,
+		"\n",
+	])
 	use := {
-		false: concat("", ["├", concat("┼", [_repeat("─", m) | some m in col_maxs]), "┤\n"]),
-		true: concat("", ["└", concat("┴", [_repeat("─", m) | some m in col_maxs]), "┘"]),
+		false: concat("", [
+			style.middle_left,
+			concat(style.center, [_repeat(style.horizontal, m) | some m in col_maxs]),
+			style.middle_right,
+			"\n",
+		]),
+		true: concat("", [
+			style.bottom_left,
+			concat(style.bottom_middle, [_repeat(style.horizontal, m) | some m in col_maxs]),
+			style.bottom_right,
+		]),
 	}
 
 	con := concat("", [lines |
